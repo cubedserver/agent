@@ -1,0 +1,28 @@
+{
+  "name": "cubedagent-windows",
+  "version": "1.0.0",
+  "description": "Cubed Server: Deployment, Monitoring and Backup",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cubedserver/agent-windows.git"
+  },
+  "author": "CubedServer",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cubedserver/agent-windows/issues"
+  },
+  "homepage": "https://github.com/cubedserver/agent-windows#readme",
+  "dependencies": {
+    "auto-launch": "^5.0.5",
+    "delay": "^2.0.0",
+    "electron": "^1.8.4",
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-winstaller": "^2.6.4",
+    "request": "^2.85.0",
+    "systeminformation": "^3.38.0"
+  }
+}
