@@ -2,6 +2,7 @@ const path = require('path');
 const sysinfo = require('systeminformation');
 const fs = require("fs");
 var request = require('request');
+const axios = require('axios').default;
 
 // Do the job
 function dataCollector() {
@@ -160,9 +161,9 @@ function dataCollector() {
         post_data = post_data + "{baseboard}" + baseboard + "{/baseboard}";
         
         
-        if(gateway != "") {
-            request.post(gateway).form({data: post_data})
-        }
+        axios.post(gateway, {
+            data: post_data
+        });
     }
     
     // get networking data
