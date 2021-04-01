@@ -4,15 +4,12 @@
     <title>Cubed Server Agent</title>
     <link rel="stylesheet" href="assets/css/materialize.min.css">
 </head>
-
 <body>
-
     <nav>
         <div class="nav-wrapper blue darken-1">
             <a class="brand-logo center">Cubed Server Agent</a>
         </div>
     </nav>
-
     <div class="container">
         <br>
         <form>
@@ -24,12 +21,9 @@
                 <label>Endpoint</label>
                 <input type="text" id="gateway">
             </div>
-
-
             <button type="submit" class="btn waves-effect waves-light right">Save</button>
         </form>
     </div>
-
     <script>
         const electron = require('electron');
         const {ipcRenderer} = electron;
