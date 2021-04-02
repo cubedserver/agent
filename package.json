@@ -32,8 +32,8 @@
     "systeminformation": "^3.38.0"
   },
   "devDependencies": {
-    "electron": "^7.1.1",
-    "electron-builder": "^21.2.0",
+    "electron": "^12.0.2",
+    "electron-builder": "^22.10.5",
     "np": "^5.0.3",
     "xo": "^0.25.3"
   },
@@ -53,7 +53,7 @@
     "appId": "com.cubedserver.CubedAgent",
     "mac": {
       "category": "public.app-category.monitoring",
-      "darkModeSupport": true
+      "darkModeSupport": false
     },
     "dmg": {
       "iconSize": 160,
