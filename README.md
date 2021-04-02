@@ -33,6 +33,12 @@ $ npm install
 $ npm start
 ```
 
+### Build
+
+```
+$ npm run dist
+```
+
 ### Publish
 
 ```

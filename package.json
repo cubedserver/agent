@@ -1,6 +1,6 @@
 {
   "name": "cubed-agent",
-  "productName": "Cubed Agent",
+  "productName": "CubedAgent",
   "version": "1.0.0",
   "description": "Cubed Server: Deployment, Monitoring and Backup",
   "main": "main.js",
