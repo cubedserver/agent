@@ -25,13 +25,13 @@ function mainMenu(mainWindow)
             ]
         }
     ];
-
+    
     Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 function trayMenu(mainWindow) {
     const iconPath = path.join(__dirname, 'assets/images/icon.png');
-
+    
     // Tray menu
     let trayIcon = new Tray(iconPath);
     const trayMenu = Menu.buildFromTemplate([

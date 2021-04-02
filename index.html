@@ -29,20 +29,20 @@
             <a class="navbar-brand" href="#" x-on:click="reload">
                 <img src="assets/images/logo-horizontal-white.svg" height="30">
             </a>
-
+            
             <button type="button" class="btn btn-dark" x-on:click="openSettings" x-show="!isOpenSettings()">
                 <svg style="height: 25px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
             </button>
-
+            
             <button type="button" class="btn btn-dark" x-on:click="closeSettings" x-show="isOpenSettings()">
                 <svg style="height: 25px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
             </button>
-          </div>
+        </div>
     </nav>
     <div class="container mt-4">
         <main>
@@ -51,143 +51,143 @@
                     <div class="d-flex">
                         <p x-text="alert.message" class="p-0 m-0 w-100"></p>
                         <button 
-                            type="button"
-                            class="btn btn-xs btn-outline-dark flex-shrink-1"
-                            @click="alerts = alerts.filter((elem, i) => { return i != index; })"
+                        type="button"
+                        class="btn btn-xs btn-outline-dark flex-shrink-1"
+                        @click="alerts = alerts.filter((elem, i) => { return i != index; })"
                         >
-                            <svg style="height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
+                        <svg style="height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
-            </template>
-
-            <div class="row g-5" x-show="isOpenSettings()">
-                <div class="col-md-12">
-                    <h4 class="mb-3">Sync Settings</h4>
-
-                    <form class="needs-validation" novalidate>
-                        <div class="row g-3 mb-4">
-                            
-                            <div class="col-12">
-                                <label for="serverkey" class="form-label">Server Key</label>
-                                <input type="text" class="form-control" x-model="serverkey" placeholder="Identification key for this computer">
-                            </div>
-                            
-                            <div class="col-12">
-                                <label for="gateway" class="form-label">Endpoint</label>
-                                <input type="text" class="form-control" x-model="gateway" placeholder="URL where the data will be sent">
-                            </div>
+            </div>
+        </template>
+        
+        <div class="row g-5" x-show="isOpenSettings()">
+            <div class="col-md-12">
+                <h4 class="mb-3">Sync Settings</h4>
+                
+                <form class="needs-validation" novalidate>
+                    <div class="row g-3 mb-4">
+                        
+                        <div class="col-12">
+                            <label for="serverkey" class="form-label">Server Key</label>
+                            <input type="text" class="form-control" x-model="serverkey" placeholder="Identification key for this computer">
                         </div>
                         
-                        <button class="w-100 btn btn-primary btn-lg" x-show="!loading" x-on:click="saveSettings($event)">
-                            Save
-                        </button>
-                        <button class="w-100 btn btn-primary btn-lg disabled" x-show="loading">Saving...</button>
-                    </form>
-                </div>
-            </div>
-            <div class="row g-5" x-show="!isOpenSettings()">
-                <div class="col-md-12">
-                    <p class="p-0 m-0 w-100">Last sync: <span x-show="lastSync" x-text="lastSync"></span> <span x-show="!lastSync">Waiting...</span></p>
-                    <p class="p-0 m-0 w-100 text-muted" x-text="logs"></p>
-                </div>
-            </div>
-        </main>
-        
-        <footer class="mt-5 text-muted text-center text-small">
-            <p class="mb-1">&copy; <span x-text="year"></span> Cubed Server</p>
-            <ul class="list-inline">
-                <li class="list-inline-item">
-                    <a class="external-link" href="https://cubedserver.com/privacy">Privacy</a>
-                </li>
-                <li class="list-inline-item">
-                    <a class="external-link" href="https://cubedserver.com/terms">Terms</a>
-                </li>
-                <li class="list-inline-item">
-                    <a class="external-link" href="https://cubedserver.com/support">Support</a>
-                </li>
-            </ul>
-        </footer>
-    </div>
-    <script>
-        const { ipcRenderer } = require('electron')
-        const config = require('./config');
-
-        function data() {
-            return {
-                serverkey: null,
-                gateway: null,
-                lastSync: null,
-                year: new Date().getFullYear(),
-                showSettings: false,
-                loading: false,
-                logs: '',
-                alerts: [],
-                
-                openSettings() {
-                    this.showSettings = true
-                },
-                
-                closeSettings() {
-                    this.showSettings = false
-                },
-                
-                isOpenSettings() {
-                    return this.showSettings === true
-                },
-
-                saveSettings(e) {
-                    e.preventDefault();
-
-                    this.loading = true;
-
-                    config.set('serverkey', this.serverkey);
-                    config.set('gateway', this.gateway);
-
-                    setTimeout(() => {
-                        this.loading = false;
-                        this.flash('success', 'Settings saved successfully.');
-                    }, 1000);
-
-                },
-
-                flash(type, message) {
-                    this.alerts.push({
-                        type: 'alert-' + type,
-                        message: message
-                    });
-                },
-
-                fresh(data) {
-                    if(data.last_sync) this.lastSync = new Date(data.last_sync).toString();
-                    if(data.serverkey) this.serverkey = data.serverkey;
-                    if(data.gateway) this.gateway = data.gateway;
-                    if(data.loading) this.loading = data.loading;
-                    if(data.message) this.logs = data.message;
-                },
-
-                reload() {
-
-                },
-
-                init() {
-                    this.serverkey = config.get('serverkey');
-                    this.gateway = config.get('gateway');
+                        <div class="col-12">
+                            <label for="gateway" class="form-label">Endpoint</label>
+                            <input type="text" class="form-control" x-model="gateway" placeholder="URL where the data will be sent">
+                        </div>
+                    </div>
                     
-                    lastSync = config.get('last_sync', null);
-
-                    this.fresh({
-                        last_sync: lastSync
-                    });
-
-                    ipcRenderer.on('collector:flash', (e, data) => {
-                        this.fresh(data);
-                    });
-                }
+                    <button class="w-100 btn btn-primary btn-lg" x-show="!loading" x-on:click="saveSettings($event)">
+                        Save
+                    </button>
+                    <button class="w-100 btn btn-primary btn-lg disabled" x-show="loading">Saving...</button>
+                </form>
+            </div>
+        </div>
+        <div class="row g-5" x-show="!isOpenSettings()">
+            <div class="col-md-12">
+                <p class="p-0 m-0 w-100">Last sync: <span x-show="lastSync" x-text="lastSync"></span> <span x-show="!lastSync">Waiting...</span></p>
+                <p class="p-0 m-0 w-100 text-muted" x-text="logs"></p>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="mt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; <span x-text="year"></span> Cubed Server</p>
+        <ul class="list-inline">
+            <li class="list-inline-item">
+                <a class="external-link" href="https://cubedserver.com/privacy">Privacy</a>
+            </li>
+            <li class="list-inline-item">
+                <a class="external-link" href="https://cubedserver.com/terms">Terms</a>
+            </li>
+            <li class="list-inline-item">
+                <a class="external-link" href="https://cubedserver.com/support">Support</a>
+            </li>
+        </ul>
+    </footer>
+</div>
+<script>
+    const { ipcRenderer } = require('electron')
+    const config = require('./config');
+    
+    function data() {
+        return {
+            serverkey: null,
+            gateway: null,
+            lastSync: null,
+            year: new Date().getFullYear(),
+            showSettings: false,
+            loading: false,
+            logs: '',
+            alerts: [],
+            
+            openSettings() {
+                this.showSettings = true
+            },
+            
+            closeSettings() {
+                this.showSettings = false
+            },
+            
+            isOpenSettings() {
+                return this.showSettings === true
+            },
+            
+            saveSettings(e) {
+                e.preventDefault();
+                
+                this.loading = true;
+                
+                config.set('serverkey', this.serverkey);
+                config.set('gateway', this.gateway);
+                
+                setTimeout(() => {
+                    this.loading = false;
+                    this.flash('success', 'Settings saved successfully.');
+                }, 1000);
+                
+            },
+            
+            flash(type, message) {
+                this.alerts.push({
+                    type: 'alert-' + type,
+                    message: message
+                });
+            },
+            
+            fresh(data) {
+                if(data.last_sync) this.lastSync = new Date(data.last_sync).toString();
+                if(data.serverkey) this.serverkey = data.serverkey;
+                if(data.gateway) this.gateway = data.gateway;
+                if(data.loading) this.loading = data.loading;
+                if(data.message) this.logs = data.message;
+            },
+            
+            reload() {
+                
+            },
+            
+            init() {
+                this.serverkey = config.get('serverkey');
+                this.gateway = config.get('gateway');
+                
+                lastSync = config.get('last_sync', null);
+                
+                this.fresh({
+                    last_sync: lastSync
+                });
+                
+                ipcRenderer.on('collector:flash', (e, data) => {
+                    this.fresh(data);
+                });
             }
         }
-    </script>
+    }
+</script>
 </body>
 </html>

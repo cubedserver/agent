@@ -49,11 +49,11 @@ const createMainWindow = () => {
             enableRemoteModule: true,
         }
     });
-
-	globalShortcut.register('CommandOrControl+R', function() {
-		win.reload()
-	});
-
+    
+    globalShortcut.register('CommandOrControl+R', function() {
+        win.reload()
+    });
+    
     // Load HTML into main window
     win.loadFile(path.join(__dirname, 'index.html'));
     
@@ -62,14 +62,14 @@ const createMainWindow = () => {
         e.sender.hide();
         e.preventDefault();
     });
-
+    
     win.on('ready-to-show', () => {
         
     });
-
+    
     // Open the DevTools.
     // win.webContents.openDevTools()
-
+    
     return win;
 }
 
@@ -84,34 +84,34 @@ process.on('uncaughtException', (err) => {
 
 // Prevent multiple instances of the app
 if (!app.requestSingleInstanceLock()) {
-	app.quit();
+    app.quit();
 }
 
 app.on('second-instance', () => {
-	if (mainWindow) {
-		if (mainWindow.isMinimized()) {
-			mainWindow.restore();
-		}
-
-		mainWindow.show();
-	}
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+        }
+        
+        mainWindow.show();
+    }
 });
 
 app.on('window-all-closed', () => {
-	if ((process.platform !== 'darwin')) {
-		app.quit();
-	}
+    if ((process.platform !== 'darwin')) {
+        app.quit();
+    }
 });
 
 app.on('activate', () => {
-	if (!mainWindow) {
-		mainWindow = createMainWindow();
-	}
+    if (!mainWindow) {
+        mainWindow = createMainWindow();
+    }
 });
 
 app.whenReady().then(() => {
     mainWindow = createMainWindow();
-
+    
     mainMenu(mainWindow);
     trayMenu(mainWindow);
     
