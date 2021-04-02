@@ -2,8 +2,8 @@ const electron = require('electron');
 const path = require('path');
 var AutoLaunch = require('auto-launch');
 const {mainMenu, trayMenu} = require('./menu');
-const dataCollector = require('./dataCollector');
-const {app, powerSaveBlocker, BrowserWindow, ipcMain} = electron;
+const dataCollector = require('./data-collector');
+const {app, powerSaveBlocker, BrowserWindow} = electron;
 const globalShortcut = electron.globalShortcut
 const contextMenu = require('electron-context-menu');
 const config = require('./config');
@@ -12,7 +12,7 @@ contextMenu();
 
 powerSaveBlocker.start('prevent-app-suspension');
 
-const iconLargePath = path.join(__dirname, 'static/icon_large.png');
+const iconLargePath = path.join(__dirname, 'static/icon.png');
 
 var agentAutoLauncher = new AutoLaunch({
     name: 'Cubed Server Agent',
@@ -49,31 +49,31 @@ const createMainWindow = () => {
             enableRemoteModule: true,
         }
     });
-    
+
     globalShortcut.register('CommandOrControl+R', function() {
         win.reload()
     });
-    
+
     // Load HTML into main window
     win.loadFile(path.join(__dirname, 'index.html'));
-    
+
     // Prevent quit on main window close
     win.on("close", (e) => {
         e.sender.hide();
         e.preventDefault();
     });
-    
+
     win.on('ready-to-show', () => {
-        
+
     });
-    
+
     // Open the DevTools.
     // win.webContents.openDevTools()
-    
+
     return win;
 }
 
-app.on("before-quit", (ev) => {    
+app.on("before-quit", (ev) => {
     // release mainWindow
     mainWindow = null;
 });
@@ -92,7 +92,7 @@ app.on('second-instance', () => {
         if (mainWindow.isMinimized()) {
             mainWindow.restore();
         }
-        
+
         mainWindow.show();
     }
 });
@@ -111,10 +111,10 @@ app.on('activate', () => {
 
 app.whenReady().then(() => {
     mainWindow = createMainWindow();
-    
+
     mainMenu(mainWindow);
     trayMenu(mainWindow);
-    
+
     // Do the job | run every 60 seconds
     setInterval(() => {
         dataCollector(mainWindow);
