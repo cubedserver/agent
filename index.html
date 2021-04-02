@@ -65,19 +65,24 @@
         
         <div class="row g-5" x-show="isOpenSettings()">
             <div class="col-md-12">
-                <h4 class="mb-3">Sync Settings</h4>
+                <div class="mb-4">
+                    <h4 class="p-0 m-0">Sync Settings</h4>
+                    <p class="p-0 m-0 text-muted" x-text="logs"></p>
+                </div>
                 
                 <form class="needs-validation" novalidate>
                     <div class="row g-3 mb-4">
                         
                         <div class="col-12">
                             <label for="serverkey" class="form-label">Server Key</label>
-                            <input type="text" class="form-control" x-model="serverkey" placeholder="Identification key for this computer">
+                            <input type="text" :class="{ 'is-invalid': serverkey.error }" class="form-control" x-model="serverkey.text" placeholder="Identification key for this computer">
+                            <div class="invalid-feedback" x-text="serverkey.feedback"></div>
                         </div>
                         
                         <div class="col-12">
                             <label for="gateway" class="form-label">Endpoint</label>
-                            <input type="text" class="form-control" x-model="gateway" placeholder="URL where the data will be sent">
+                            <input type="text" :class="{ 'is-invalid': gateway.error }" class="form-control" x-model="gateway.text" placeholder="URL where the data will be sent">
+                            <div class="invalid-feedback" x-text="gateway.feedback"></div>
                         </div>
                     </div>
                     
@@ -121,14 +126,27 @@
         </ul>
     </footer>
 </div>
+<script src="static/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
 <script>
     const { ipcRenderer } = require('electron')
     const config = require('./config');
+    const uuidValidate = require('./static/js/uuid-validate');
+    const urlValidate = require('./static/js/url-validate');
     
     function data() {
         return {
-            serverkey: null,
-            gateway: null,
+            serverkey: {
+                text: null,
+                error: false,
+                feedback: null
+            },
+
+            gateway: {
+                text: null,
+                error: false,
+                feedback: null
+            },
+
             lastSync: null,
             year: new Date().getFullYear(),
             showSettings: false,
@@ -148,13 +166,38 @@
                 return this.showSettings === true
             },
             
+            settingsValidate()
+            {
+                let success = true;
+                this.serverkey.error = false;
+                this.gateway.error = false;
+
+                if (!this.serverkey.text || !uuidValidate(this.serverkey.text)) {
+                    success = false;
+                    this.serverkey.error = true;
+                    this.serverkey.feedback = 'You must enter a valid Server Key.';
+                }
+
+                if (!this.gateway.text || !urlValidate(this.gateway.text)) {
+                    success = false;
+                    this.gateway.error = true;
+                    this.gateway.feedback = 'You must enter a valid Gateway.';
+                }
+
+                return success;
+            },
+
             saveSettings(e) {
                 e.preventDefault();
+
+                if (!this.settingsValidate()) {
+                    return;
+                }
                 
                 this.loading = true;
                 
-                config.set('serverkey', this.serverkey);
-                config.set('gateway', this.gateway);
+                config.set('serverkey', this.serverkey.text);
+                config.set('gateway', this.gateway.text);
                 
                 setTimeout(() => {
                     this.loading = false;
@@ -171,11 +214,25 @@
             },
             
             fresh(data) {
-                if(data.last_sync) this.lastSync = new Date(data.last_sync).toString();
-                if(data.serverkey) this.serverkey = data.serverkey;
-                if(data.gateway) this.gateway = data.gateway;
-                if(data.loading) this.loading = data.loading;
-                if(data.message) this.logs = data.message;
+                if (data.lastSync) {
+                    this.lastSync = new Date(data.lastSync).toString();
+                }
+
+                if (data.serverkey) {
+                    this.serverkey.text = data.serverkey;
+                }
+
+                if (data.gateway) {
+                    this.gateway.text = data.gateway;
+                }
+
+                if (data.loading) {
+                    this.loading = data.loading;
+                }
+
+                if (data.message) {
+                    this.logs = data.message;
+                }
             },
             
             reload() {
@@ -183,13 +240,18 @@
             },
             
             init() {
-                this.serverkey = config.get('serverkey');
-                this.gateway = config.get('gateway');
-                
+                serverkey = config.get('serverkey', null);
+                gateway = config.get('gateway', null);
                 lastSync = config.get('lastSync', null);
+
+                if (!serverkey || !gateway) {
+                    this.openSettings();
+                }
                 
                 this.fresh({
-                    last_sync: lastSync
+                    serverkey: serverkey,
+                    gateway: gateway,
+                    lastSync: lastSync,
                 });
                 
                 ipcRenderer.on('collector:flash', (e, data) => {

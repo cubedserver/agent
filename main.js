@@ -37,7 +37,7 @@ const createMainWindow = () => {
     // Create main window
     const win = new BrowserWindow({
         width: 600,
-        height: 500,
+        height: 550,
         center: true,
         minimizable: false,
         maximizable: false,

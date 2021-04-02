@@ -8,13 +8,13 @@ function dataCollector(mainWindow) {
 	function collectorFlash(mainWindow, data) {
 		message =  (data.message) ? data.message : null;
 		loading = (data.loading) ? data.loading : null;
-		last_sync = (data.last_sync) ? data.last_sync : null;
+		lastSync = (data.lastSync) ? data.lastSync : null;
 
 		if (mainWindow) {
 			mainWindow.webContents.send('collector:flash', {
 				message: message,
 				loading: loading,
-				last_sync: last_sync,
+				lastSync: lastSync,
 			});
 		}
 	}
@@ -47,7 +47,7 @@ function dataCollector(mainWindow) {
 		post_data = post_data + "{agent_version}" + agent_version + "{/agent_version}";
 
 		// Serverkey
-		serverkey = config.get('serverkey');
+		serverkey = config.get('serverkey', null);
 		post_data = post_data + "{serverkey}" + serverkey + "{/serverkey}";
 
 		// Gateway
@@ -200,21 +200,34 @@ function dataCollector(mainWindow) {
 		config.set('lastSync', now);
 
 		collectorFlash(mainWindow, {
-			last_sync: now
+			lastSync: now
 		});
 	}
 
-	collectorFlash(mainWindow, {
-		message: 'Starting data collection...'
-	});
+	serverkey = config.get('serverkey');
+	gateway = config.get('gateway');
 
-	// get networking data
-	firstNetworkPass();
+	if (!serverkey) {
+		collectorFlash(mainWindow, {
+			message: 'You must provide a Server Key to start collecting data.'
+		});
+	} else if(!gateway) {
+		collectorFlash(mainWindow, {
+			message: 'You must define a Gateway to send the collected data.'
+		});
+	} else {
+		collectorFlash(mainWindow, {
+			message: 'Starting data collection...'
+		});
 
-	// wait 1 second and run the main reporting function
-	setTimeout(() => {
-		collectAndReport(mainWindow)
-	}, 1000);
+		// get networking data
+		firstNetworkPass();
+
+		// wait 1 second and run the main reporting function
+		setTimeout(() => {
+			collectAndReport(mainWindow)
+		}, 1000);
+	}
 }
 
 module.exports = dataCollector;
