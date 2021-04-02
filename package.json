@@ -1,18 +1,19 @@
 {
-  "name": "cubedagent-windows",
+  "name": "cubed-agent",
+  "productName": "Cubed Agent",
   "version": "1.0.0",
   "description": "Cubed Server: Deployment, Monitoring and Backup",
   "main": "main.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cubedserver/agent-windows.git"
+    "url": "git+https://github.com/cubedserver/agent.git"
   },
   "author": "CubedServer",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/cubedserver/agent-windows/issues"
+    "url": "https://github.com/cubedserver/agent/issues"
   },
-  "homepage": "https://github.com/cubedserver/agent-windows#readme",
+  "homepage": "https://github.com/cubedserver/agent#readme",
   "scripts": {
     "postinstall": "electron-builder install-app-deps",
     "lint": "xo",
@@ -43,13 +44,15 @@
     ]
   },
   "np": {
-    "publish": false,
-    "releaseDraft": false
+    "branch": "main",
+    "anyBranch": true,
+    "publish": true,
+    "releaseDraft": true
   },
   "build": {
-    "appId": "com.company.AppName",
+    "appId": "com.cubedserver.CubedAgent",
     "mac": {
-      "category": "public.app-category.social-networking",
+      "category": "public.app-category.monitoring",
       "darkModeSupport": true
     },
     "dmg": {
@@ -72,7 +75,7 @@
         "AppImage",
         "deb"
       ],
-      "category": "Network;Chat"
+      "category": "Monitoring;Server"
     }
   }
 }
