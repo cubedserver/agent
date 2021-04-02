@@ -36,7 +36,7 @@ function trayMenu(mainWindow) {
     let trayIcon = new Tray(iconPath);
     const trayMenu = Menu.buildFromTemplate([
         {
-            label: 'Cubed Server Agent',
+            label: 'Cubed Agent',
             icon: iconPath,
             click: function() {
                 mainWindow.show();
@@ -51,7 +51,7 @@ function trayMenu(mainWindow) {
         }
     ]);
     
-    trayIcon.setToolTip('Cubed Server Agent');
+    trayIcon.setToolTip('Cubed Agent');
     trayIcon.setContextMenu(trayMenu);
     
     trayIcon.on('click', () => {

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cubed Server Agent</title>
+    <title>Cubed Agent</title>
     <link rel="stylesheet" href="static/css/bootstrap.min.css">
     <link rel="stylesheet" href="static/css/custom.css">
     <meta name="theme-color" content="#7952b3">
@@ -90,8 +90,18 @@
         </div>
         <div class="row g-5" x-show="!isOpenSettings()">
             <div class="col-md-12">
-                <p class="p-0 m-0 w-100">Last sync: <span x-show="lastSync" x-text="lastSync"></span> <span x-show="!lastSync">Waiting...</span></p>
-                <p class="p-0 m-0 w-100 text-muted" x-text="logs"></p>
+                <div class="card">
+                  <div class="card-body">
+                        <p class="p-0 m-0 w-100 fs-6">
+                            <strong>Last sync:</strong><br>
+                            <span x-show="lastSync" x-text="lastSync"></span>
+                            <span x-show="!lastSync">
+                                Waiting for first sync...
+                            </span>
+                        </p>
+                        <p class="p-0 m-0 w-100 text-muted" x-text="logs"></p>
+                    </div>
+                </div>
             </div>
         </div>
     </main>

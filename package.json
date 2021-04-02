@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git+https://github.com/cubedserver/agent.git"
   },
-  "author": "CubedServer",
+  "author": "CubedServer <fabio@codions.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/cubedserver/agent/issues"

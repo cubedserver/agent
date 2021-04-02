@@ -15,7 +15,7 @@ powerSaveBlocker.start('prevent-app-suspension');
 const iconLargePath = path.join(__dirname, 'static/icon.png');
 
 var agentAutoLauncher = new AutoLaunch({
-    name: 'Cubed Server Agent',
+    name: 'Cubed Agent',
 });
 
 agentAutoLauncher.enable();
