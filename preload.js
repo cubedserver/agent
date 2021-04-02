@@ -1,5 +1,5 @@
 const { shell } = require("electron");
-const Alpine = require("./assets/js/alpine");
+const Alpine = require("./static/js/alpine");
 
 // All of the Node.js APIs are available in the preload process.
 // It has the same sandbox as a Chrome extension.

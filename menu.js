@@ -30,7 +30,7 @@ function mainMenu(mainWindow)
 }
 
 function trayMenu(mainWindow) {
-    const iconPath = path.join(__dirname, 'assets/images/icon.png');
+    const iconPath = path.join(__dirname, 'static/tray-icon.png');
     
     // Tray menu
     let trayIcon = new Tray(iconPath);
