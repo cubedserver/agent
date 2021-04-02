@@ -1,12 +1,24 @@
-const path = require('path');
 const sysinfo = require('systeminformation');
-const fs = require("fs");
-var request = require('request');
 const axios = require('axios').default;
+const config = require('./config');
 
 // Do the job
-function dataCollector() {
+function dataCollector(mainWindow) {
     
+    function collectorFlash(mainWindow, data) {
+        message =  (data.message) ? data.message : null;
+        loading = (data.loading) ? data.loading : null;
+        last_sync = (data.last_sync) ? data.last_sync : null;
+
+        if (mainWindow) {
+            mainWindow.webContents.send('collector:flash', {
+                message: message,
+                loading: loading,
+                last_sync: last_sync,
+            });
+        }
+    }
+
     async function firstNetworkPass() {
         const ifaces = await sysinfo.networkInterfaces();
         
@@ -15,7 +27,7 @@ function dataCollector() {
         }
     }
     
-    async function collectAndReport() {
+    async function collectAndReport(mainWindow) {        
         var post_data = "";
         
         const allData = await sysinfo.getAllData();
@@ -35,13 +47,11 @@ function dataCollector() {
         post_data = post_data + "{agent_version}" + agent_version + "{/agent_version}";
         
         // Serverkey
-        serverkey_file = fs.readFileSync(path.join(__dirname, 'data/serverkey.txt'));
-        serverkey = serverkey_file.toString();
+        serverkey = config.get('serverkey');
         post_data = post_data + "{serverkey}" + serverkey + "{/serverkey}";
         
         // Gateway
-        gateway_file = fs.readFileSync(path.join(__dirname, 'data/gateway.txt'));
-        gateway = gateway_file.toString();
+        gateway = config.get('gateway');
         post_data = post_data + "{gateway}" + gateway + "{/gateway}";
         
         // Time
@@ -160,17 +170,51 @@ function dataCollector() {
         baseboard = JSON.stringify(allData.baseboard);
         post_data = post_data + "{baseboard}" + baseboard + "{/baseboard}";
         
-        
+        collectorFlash(mainWindow, {
+            message: 'Sending collected data...'
+        });
+
         axios.post(gateway, {
             data: post_data
+        })
+        .then(function (response) {
+            // handle success
+            collectorFlash(mainWindow, {
+                message: 'Data sent successfully'
+            });
+        })
+        .catch(function (error) {
+            // handle error
+            collectorFlash(mainWindow, {
+                message: 'Error sending data to the server'
+            });
+        })
+        .then(function () {
+            // always executed
+        });
+
+        const timeElapsed = Date.now();
+        const today = new Date(timeElapsed);
+        const now = today.toISOString();
+
+        config.set('last_sync', now);
+
+        collectorFlash(mainWindow, {
+            last_sync: now
         });
     }
+
+    collectorFlash(mainWindow, {
+        message: 'Starting data collection...'
+    });
     
     // get networking data
     firstNetworkPass();
     
     // wait 1 second and run the main reporting function
-    setTimeout(collectAndReport, 1000);
+    setTimeout(() => {
+        collectAndReport(mainWindow)
+    }, 1000);
 }
 
 module.exports = dataCollector;

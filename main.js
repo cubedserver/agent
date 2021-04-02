@@ -1,12 +1,14 @@
 const electron = require('electron');
-const url = require('url');
 const path = require('path');
-const fs = require("fs");
 var AutoLaunch = require('auto-launch');
 const {mainMenu, trayMenu} = require('./menu');
 const dataCollector = require('./dataCollector');
-
 const {app, powerSaveBlocker, BrowserWindow, ipcMain} = electron;
+const globalShortcut = electron.globalShortcut
+const contextMenu = require('electron-context-menu');
+const config = require('./config');
+
+contextMenu();
 
 powerSaveBlocker.start('prevent-app-suspension');
 
@@ -18,105 +20,103 @@ var agentAutoLauncher = new AutoLaunch({
 
 agentAutoLauncher.enable();
 agentAutoLauncher.isEnabled()
-.then(function(isEnabled){
+.then((isEnabled) => {
     if(isEnabled){
         return;
     }
     agentAutoLauncher.enable();
 })
-.catch(function(err){
+.catch((err) => {
     // handle error
 });
 
-
+// Prevent window from being garbage collected
 let mainWindow;
 
-// Listen for the app to be ready
-app.on('ready', function(){
-    
-    serverkey_file = fs.readFileSync(path.join(__dirname, 'data/serverkey.txt'));
-    serverkey = serverkey_file.toString();
-    
-    showOnStart = false;
-    
-    if(serverkey.length < 5) showOnStart = true;
-    
+const createMainWindow = () => {
     // Create main window
-    mainWindow = new BrowserWindow({
-        width: 500,
-        height: 360,
+    const win = new BrowserWindow({
+        width: 600,
+        height: 500,
         center: true,
         minimizable: false,
         maximizable: false,
-        show: showOnStart,
-        icon: iconLargePath
+        icon: iconLargePath,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: true,
+            contextIsolation: false,
+            enableRemoteModule: true,
+        }
     });
-    
+
+	globalShortcut.register('CommandOrControl+R', function() {
+		win.reload()
+	});
+
     // Load HTML into main window
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
+    win.loadFile(path.join(__dirname, 'index.html'));
     
     // Prevent quit on main window close
-    mainWindow.on("close", function(e){
+    win.on("close", (e) => {
         e.sender.hide();
         e.preventDefault();
     });
-    
-    mainWindow.on("show", function(e){
-        serverkey_file = fs.readFileSync(path.join(__dirname, 'data/serverkey.txt'));
-        serverkey = serverkey_file.toString();
-        
-        gateway_file = fs.readFileSync(path.join(__dirname, 'data/gateway.txt'));
-        gateway = gateway_file.toString();
-        
-        mainWindow.webContents.send("config:show", [serverkey, gateway]);
-    });
-    
-    // Catch config:save
-    ipcMain.on('config:save', function(e, [serverkey, gateway]) {
-        mainWindow.webContents.send('config:save', [serverkey, gateway]);
-        
-        fs.writeFileSync(path.join(__dirname, 'data/serverkey.txt'), serverkey);
-        fs.writeFileSync(path.join(__dirname, 'data/gateway.txt'), gateway);
-    });
-    
-    
-    // Main Window menu 
-    mainMenu(mainWindow);
 
-    trayMenu(mainWindow);
-    
-    // Do the job | run every 60 seconds
-    setInterval(dataCollector, 60000);
-});
+    win.on('ready-to-show', () => {
+        
+    });
 
-app.on("before-quit", ev => {
-    // BrowserWindow "close" event spawn after quit operation,
-    // it requires to clean up listeners for "close" event
-    mainWindow.removeAllListeners("close");
-    
+    // Open the DevTools.
+    // win.webContents.openDevTools()
+
+    return win;
+}
+
+app.on("before-quit", (ev) => {    
     // release mainWindow
     mainWindow = null;
 });
 
-process.on('uncaughtException', function (err) {
+process.on('uncaughtException', (err) => {
     console.log(err);
 });
 
-// Single Instance Check - prevent multiple running agents
-var iShouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
-    if (mainWindow) {
-        if (mainWindow.isMinimized()) mainWindow.restore();
-        mainWindow.show();
-        mainWindow.focus();
-    }
-    return true;
+// Prevent multiple instances of the app
+if (!app.requestSingleInstanceLock()) {
+	app.quit();
+}
+
+app.on('second-instance', () => {
+	if (mainWindow) {
+		if (mainWindow.isMinimized()) {
+			mainWindow.restore();
+		}
+
+		mainWindow.show();
+	}
 });
 
-if(iShouldQuit){
-    app.quit();
-    return;
-}
+app.on('window-all-closed', () => {
+	if ((process.platform !== 'darwin')) {
+		app.quit();
+	}
+});
+
+app.on('activate', () => {
+	if (!mainWindow) {
+		mainWindow = createMainWindow();
+	}
+});
+
+app.whenReady().then(() => {
+    mainWindow = createMainWindow();
+
+    mainMenu(mainWindow);
+    trayMenu(mainWindow);
+    
+    // Do the job | run every 60 seconds
+    setInterval(() => {
+        dataCollector(mainWindow);
+    }, 60000);
+});

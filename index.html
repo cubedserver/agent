@@ -1,54 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cubed Server Agent</title>
-    <link rel="stylesheet" href="assets/css/materialize.min.css">
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+    <meta name="theme-color" content="#7952b3">
+    <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            user-select: none;
+        }
+        
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
 </head>
-<body>
-    <nav>
-        <div class="nav-wrapper blue darken-1">
-            <a class="brand-logo center">Cubed Server Agent</a>
-        </div>
+<body class="bg-light" x-data="data()" x-init="init()">
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#" x-on:click="reload">
+                <img src="assets/images/logo-horizontal-white.svg" height="30">
+            </a>
+
+            <button type="button" class="btn btn-dark" x-on:click="openSettings" x-show="!isOpenSettings()">
+                <svg style="height: 25px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+            </button>
+
+            <button type="button" class="btn btn-dark" x-on:click="closeSettings" x-show="isOpenSettings()">
+                <svg style="height: 25px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                </svg>
+            </button>
+          </div>
     </nav>
-    <div class="container">
-        <br>
-        <form>
-            <div>
-                <label>Server Key</label>
-                <input type="text" id="serverkey">
+    <div class="container mt-4">
+        <main>
+            <template x-for="(alert, index, collection) in alerts" :key="index">
+                <div class="alert alert alert-secondary py-2 px-4">
+                    <div class="d-flex">
+                        <p x-text="alert.message" class="p-0 m-0 w-100"></p>
+                        <button 
+                            type="button"
+                            class="btn btn-xs btn-outline-dark flex-shrink-1"
+                            @click="alerts = alerts.filter((elem, i) => { return i != index; })"
+                        >
+                            <svg style="height: 15px;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </template>
+
+            <div class="row g-5" x-show="isOpenSettings()">
+                <div class="col-md-12">
+                    <h4 class="mb-3">Sync Settings</h4>
+
+                    <form class="needs-validation" novalidate>
+                        <div class="row g-3 mb-4">
+                            
+                            <div class="col-12">
+                                <label for="serverkey" class="form-label">Server Key</label>
+                                <input type="text" class="form-control" x-model="serverkey" placeholder="Identification key for this computer">
+                            </div>
+                            
+                            <div class="col-12">
+                                <label for="gateway" class="form-label">Endpoint</label>
+                                <input type="text" class="form-control" x-model="gateway" placeholder="URL where the data will be sent">
+                            </div>
+                        </div>
+                        
+                        <button class="w-100 btn btn-primary btn-lg" x-show="!loading" x-on:click="saveSettings($event)">
+                            Save
+                        </button>
+                        <button class="w-100 btn btn-primary btn-lg disabled" x-show="loading">Saving...</button>
+                    </form>
+                </div>
             </div>
-            <div>
-                <label>Endpoint</label>
-                <input type="text" id="gateway">
+            <div class="row g-5" x-show="!isOpenSettings()">
+                <div class="col-md-12">
+                    <p class="p-0 m-0 w-100">Last sync: <span x-show="lastSync" x-text="lastSync"></span> <span x-show="!lastSync">Waiting...</span></p>
+                    <p class="p-0 m-0 w-100 text-muted" x-text="logs"></p>
+                </div>
             </div>
-            <button type="submit" class="btn waves-effect waves-light right">Save</button>
-        </form>
+        </main>
+        
+        <footer class="mt-5 text-muted text-center text-small">
+            <p class="mb-1">&copy; <span x-text="year"></span> Cubed Server</p>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a class="external-link" href="https://cubedserver.com/privacy">Privacy</a>
+                </li>
+                <li class="list-inline-item">
+                    <a class="external-link" href="https://cubedserver.com/terms">Terms</a>
+                </li>
+                <li class="list-inline-item">
+                    <a class="external-link" href="https://cubedserver.com/support">Support</a>
+                </li>
+            </ul>
+        </footer>
     </div>
     <script>
-        const electron = require('electron');
-        const {ipcRenderer} = electron;
+        const { ipcRenderer } = require('electron')
+        const config = require('./config');
 
-        const form = document.querySelector('form');
+        function data() {
+            return {
+                serverkey: null,
+                gateway: null,
+                lastSync: null,
+                year: new Date().getFullYear(),
+                showSettings: false,
+                loading: false,
+                logs: '',
+                alerts: [],
+                
+                openSettings() {
+                    this.showSettings = true
+                },
+                
+                closeSettings() {
+                    this.showSettings = false
+                },
+                
+                isOpenSettings() {
+                    return this.showSettings === true
+                },
 
-        ipcRenderer.on('config:save', function(e, [serverkey, gateway]){
-            document.querySelector("#serverkey").value = serverkey;
-            document.querySelector("#gateway").value = gateway;
-        });
+                saveSettings(e) {
+                    e.preventDefault();
 
-        ipcRenderer.on('config:show', function(e, [serverkey, gateway]){
-            document.querySelector("#serverkey").value = serverkey;
-            document.querySelector("#gateway").value = gateway;
-        });
+                    this.loading = true;
 
-        form.addEventListener('submit', submitForm);
+                    config.set('serverkey', this.serverkey);
+                    config.set('gateway', this.gateway);
 
-        function submitForm(e) {
-            e.preventDefault();
+                    setTimeout(() => {
+                        this.loading = false;
+                        this.flash('success', 'Settings saved successfully.');
+                    }, 1000);
 
-            const serverkey = document.querySelector('#serverkey').value;
-            const gateway = document.querySelector('#gateway').value;
+                },
 
-            ipcRenderer.send("config:save", [serverkey, gateway]);
+                flash(type, message) {
+                    this.alerts.push({
+                        type: 'alert-' + type,
+                        message: message
+                    });
+                },
+
+                fresh(data) {
+                    if(data.last_sync) this.lastSync = new Date(data.last_sync).toString();
+                    if(data.serverkey) this.serverkey = data.serverkey;
+                    if(data.gateway) this.gateway = data.gateway;
+                    if(data.loading) this.loading = data.loading;
+                    if(data.message) this.logs = data.message;
+                },
+
+                reload() {
+
+                },
+
+                init() {
+                    this.serverkey = config.get('serverkey');
+                    this.gateway = config.get('gateway');
+                    
+                    lastSync = config.get('last_sync', null);
+
+                    this.fresh({
+                        last_sync: lastSync
+                    });
+
+                    ipcRenderer.on('collector:flash', (e, data) => {
+                        this.fresh(data);
+                    });
+                }
+            }
         }
     </script>
 </body>
