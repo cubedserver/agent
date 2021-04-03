@@ -43,7 +43,7 @@ function dataCollector(mainWindow) {
 		}
 
 		// AgentVersion
-		agent_version = "1.0";
+		agent_version = config.get('agent_version', '1.0.0');
 		post_data = post_data + "{agent_version}" + agent_version + "{/agent_version}";
 
 		// Serverkey
@@ -174,19 +174,27 @@ function dataCollector(mainWindow) {
 			message: 'Sending collected data...'
 		});
 
-		axios.post(gateway, {
+		const instance = axios.create({
+		  timeout: 1000,
+		  headers: {
+			'User-Agent': 'CubedAgent v'+ agent_version +' (Electron)'
+		  }
+		});
+
+		instance.post(gateway, {
+			serverkey: serverkey,
 			data: post_data
 		})
 		.then(function (response) {
 			// handle success
 			collectorFlash(mainWindow, {
-				message: 'Data sent successfully'
+				message: 'Data sent successfully.'
 			});
 		})
 		.catch(function (error) {
 			// handle error
 			collectorFlash(mainWindow, {
-				message: 'Error sending data to the server'
+				message: 'Error sending data to the server: ' + error.message
 			});
 		})
 		.then(function () {
@@ -217,7 +225,7 @@ function dataCollector(mainWindow) {
 		});
 	} else {
 		collectorFlash(mainWindow, {
-			message: 'Starting data collection...'
+			message: 'Collecting data...'
 		});
 
 		// get networking data
