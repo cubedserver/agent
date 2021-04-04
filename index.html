@@ -80,7 +80,7 @@
                         </div>
                         
                         <div class="col-12">
-                            <label for="gateway" class="form-label">Endpoint</label>
+                            <label for="gateway" class="form-label">Gateway</label>
                             <input type="text" :class="{ 'is-invalid': gateway.error }" class="form-control" x-model="gateway.text" placeholder="URL where the data will be sent">
                             <div class="invalid-feedback" x-text="gateway.feedback"></div>
                         </div>
@@ -111,19 +111,21 @@
         </div>
     </main>
     
-    <footer class="mt-5 text-muted text-center text-small">
-        <p class="mb-1">&copy; <span x-text="year"></span> Cubed Server</p>
-        <ul class="list-inline">
-            <li class="list-inline-item">
-                <a class="external-link" href="https://cubedserver.com/privacy">Privacy</a>
-            </li>
-            <li class="list-inline-item">
-                <a class="external-link" href="https://cubedserver.com/terms">Terms</a>
-            </li>
-            <li class="list-inline-item">
-                <a class="external-link" href="https://cubedserver.com/support">Support</a>
-            </li>
-        </ul>
+    <footer class="mt-5 text-center">
+        <div class="text-muted">
+            <p class="mb-1">Cubed Agent v<span x-text="agentVersion"></span></p>
+            <ul class="list-inline">
+                <li class="list-inline-item">
+                    <a class="external-link" href="https://cubedserver.com/privacy">Privacy</a>
+                </li>
+                <li class="list-inline-item">
+                    <a class="external-link" href="https://cubedserver.com/terms">Terms</a>
+                </li>
+                <li class="list-inline-item">
+                    <a class="external-link" href="https://cubedserver.com/support">Support</a>
+                </li>
+            </ul>
+        </div>
     </footer>
 </div>
 <script src="static/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
@@ -147,6 +149,7 @@
                 feedback: null
             },
 
+            agentVersion: null,
             lastSync: null,
             year: new Date().getFullYear(),
             showSettings: false,
@@ -233,6 +236,10 @@
                 if (data.message) {
                     this.logs = data.message;
                 }
+
+                if (data.agentVersion) {
+                    this.agentVersion = data.agentVersion;
+                }
             },
             
             reload() {
@@ -242,7 +249,6 @@
             init() {
                 serverkey = config.get('serverkey', null);
                 gateway = config.get('gateway', null);
-                lastSync = config.get('lastSync', null);
 
                 if (!serverkey || !gateway) {
                     this.openSettings();
@@ -251,7 +257,8 @@
                 this.fresh({
                     serverkey: serverkey,
                     gateway: gateway,
-                    lastSync: lastSync,
+                    lastSync: config.get('lastSync', null),
+                    agentVersion: config.get('agentVersion', null),
                 });
                 
                 ipcRenderer.on('collector:flash', (e, data) => {

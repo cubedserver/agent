@@ -1,7 +1,7 @@
 {
   "name": "cubed-agent",
   "productName": "CubedAgent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Cubed Server: Deployment, Monitoring and Backup",
   "main": "main.js",
   "repository": {

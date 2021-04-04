@@ -43,7 +43,7 @@ function dataCollector(mainWindow) {
 		}
 
 		// AgentVersion
-		agent_version = config.get('agent_version', '1.0.0');
+		agent_version = config.get('agentVersion', '1.0.0');
 		post_data = post_data + "{agent_version}" + agent_version + "{/agent_version}";
 
 		// Serverkey
@@ -181,15 +181,22 @@ function dataCollector(mainWindow) {
 		  }
 		});
 
+		const timeElapsed = Date.now();
+		const today = new Date(timeElapsed);
+		const now = today.toISOString();
+
 		instance.post(gateway, {
 			serverkey: serverkey,
 			data: post_data
 		})
 		.then(function (response) {
 			// handle success
+
 			collectorFlash(mainWindow, {
 				message: 'Data sent successfully.'
 			});
+
+			config.set('lastSync', now);
 		})
 		.catch(function (error) {
 			// handle error
@@ -200,12 +207,6 @@ function dataCollector(mainWindow) {
 		.then(function () {
 			// always executed
 		});
-
-		const timeElapsed = Date.now();
-		const today = new Date(timeElapsed);
-		const now = today.toISOString();
-
-		config.set('lastSync', now);
 
 		collectorFlash(mainWindow, {
 			lastSync: now
