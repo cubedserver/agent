@@ -27,7 +27,7 @@ function dataCollector(mainWindow) {
 		}
 	}
 
-	async function collectAndReport(mainWindow) {
+	async function collectAndReport(mainWindow, gateway, serverkey) {
 		var post_data = "";
 
 		const allData = await sysinfo.getAllData();
@@ -42,17 +42,7 @@ function dataCollector(mainWindow) {
 			networkStats.push(contents);
 		}
 
-		// AgentVersion
-		agent_version = config.get('agentVersion', '1.0.0');
-		post_data = post_data + "{agent_version}" + agent_version + "{/agent_version}";
-
-		// Serverkey
-		serverkey = config.get('serverkey', null);
-		post_data = post_data + "{serverkey}" + serverkey + "{/serverkey}";
-
-		// Gateway
-		gateway = config.get('gateway');
-		post_data = post_data + "{gateway}" + gateway + "{/gateway}";
+		agentVersion = config.get('agentVersion', '1.0.0');
 
 		// Time
 		time = new Date();
@@ -177,7 +167,7 @@ function dataCollector(mainWindow) {
 		const instance = axios.create({
 		  timeout: 1000,
 		  headers: {
-			'User-Agent': 'CubedAgent v'+ agent_version +' (Electron)'
+			'User-Agent': 'CubedAgent v'+ agentVersion +' (Electron)'
 		  }
 		});
 
@@ -234,7 +224,7 @@ function dataCollector(mainWindow) {
 
 		// wait 1 second and run the main reporting function
 		setTimeout(() => {
-			collectAndReport(mainWindow)
+			collectAndReport(mainWindow, gateway, serverkey)
 		}, 1000);
 	}
 }
